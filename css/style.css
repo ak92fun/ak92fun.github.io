@@ -36,26 +36,62 @@ body {
   margin-top: 0;
 }
 
+/* =========================
+   Content typography rhythm
+   ========================= */
 .content h1,
 .content h2,
 .content h3,
 .content h4 {
-  margin-top: 1.5em;
-  margin-bottom: 0.5em;
+  margin: 1.2em 0 0.5em;
 }
 
-h1 + hr, h2 + hr, h3 + hr, h4 + hr {
-  margin-top: 0.4em;
+.content hr {
+  border: 0;
+  border-top: 1px solid #30363d;
+  margin: 0.35em 0;
 }
 
-hr + h2, hr + h3, hr + h4 {
-  margin-top: 0.8em;
+.content h1 + hr,
+.content h2 + hr,
+.content h3 + hr,
+.content h4 + hr {
+  margin-top: 0.25em;
+}
+
+.content hr + h1,
+.content hr + h2,
+.content hr + h3,
+.content hr + h4 {
+  margin-top: 0.55em;
 }
 
 h4 + p,
 h4 + ul,
 h4 + ol {
   margin-top: 0.3em;
+}
+
+
+/* =========================
+   Lists
+   ========================= */
+ul {
+  list-style: none;
+  padding-left: 2em;
+  margin-left: 0;
+}
+
+.site-header ul,
+.console-legend ul {
+  list-style: none;
+  padding-left: 2em;
+  margin-left: 0;
+}
+
+li {
+  margin: 0.2em 0;
+  line-height: 1.4;
 }
 
 /* =========================
@@ -163,87 +199,140 @@ blockquote p {
 }
 
 /* =========================
-   Tables
+   Table
    ========================= */
 .content table {
-  border-collapse: separate;
-  border-spacing: 0;
-  display: table;
-  width: auto;
+  border-collapse: collapse;
+  background: transparent;
   max-width: 100%;
-  overflow: hidden;
+}
 
-  border: 1px solid rgba(27, 31, 36, 0.15);
-  border-radius: 6px;
+.content thead,
+.content tbody,
+.content tr,
+.content th,
+.content td {
+  background: transparent;
+}
+
+.content th {
+  font-size: 1.15em;
 }
 
 .content th,
 .content td {
-  padding: 6px 13px;
-  border-top: 1px solid rgba(27, 31, 36, 0.15);
-  border-left: 1px solid rgba(27, 31, 36, 0.15);
-}
-
-.content tr > *:first-child {
-  border-left: 0;
+  padding: 0 10px;
+  line-height: 0.9;
+  white-space: nowrap;
+  border: 0;
 }
 
 .content thead th {
-  background: #f6f8fa;
+  padding-bottom: 10px;
 }
 
-.content tbody tr:nth-child(even) {
-  background: rgba(175, 184, 193, 0.15);
+.content tbody td {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-/* Rounded corners via first/last cells */
-.content thead tr:first-child th:first-child {
-  border-top-left-radius: 6px;
+/* Default alignment */
+.content th {
+  text-align: center;
+  font-weight: 600;
 }
-.content thead tr:first-child th:last-child {
-  border-top-right-radius: 6px;
+
+.content td {
+  text-align: left;
 }
-.content tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 6px;
+
+.content th.center,
+.content td.center {
+  text-align: center;
 }
-.content tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 6px;
+
+.content th.num,
+.content td.num {
+  text-align: right;
 }
 
 /* =========================
    Table copy button
    ========================= */
 .content .copy-row-btn {
-  font: inherit;
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(27, 31, 36, 0.2);
   background: transparent;
+  border: none;
+  padding: 4px;
   cursor: pointer;
-}
-
-.content .copy-row-btn:hover {
-  border-color: currentColor;
+  color: #0969da; /* blue = clickable */
 }
 
 .content .copy-row-btn:disabled {
-  opacity: 0.7;
   cursor: default;
+  opacity: 0.8;
+}
+
+/* Copy icon (inline SVG) */
+.copy-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
 }
 
 /* =========================
-   Horizontal rule
+   Legend
    ========================= */
-hr {
-  border: 0;
-  border-top: 1px solid #30363d; 
-  margin: 0.75em 0;
+.console-legend {
+  font-size: 0.9em;
+  color: #8b949e;
+  margin-bottom: 1.25em;
+}
+
+.console-legend ul {
+  padding-left: 1.25em;
+}
+
+.console-legend li {
+  margin: 0.15em 0;
+  line-height: 1.3;
+}
+
+
+.console-legend summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.console-legend summary::-webkit-details-marker {
+  display: none;
+}
+
+.console-legend summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 6px solid #8b949e;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.console-legend[open] > summary::before,
+.console-legend details[open] > summary::before {
+  transform: rotate(90deg);
 }
 
 /* =========================
    Footer
    ========================= */
-
 .site-footer {
   margin-top: 1em;
   padding-top: 0.5em;
@@ -255,7 +344,6 @@ hr {
 .site-footer p {
   margin: 0.2em 0;
 }
-
 /* =========================
    Dark mode overrides
    ========================= */
@@ -287,25 +375,20 @@ hr {
   }
   
   /* tables */
-  .content table {
-    border-color: #30363d;
-  }
-  
+  .content table,
   .content th,
   .content td {
-    border-top-color: #30363d;
-    border-left-color: #30363d;
+    border: 0;
+    background: transparent;
   }
   
   .content thead th {
-    background: #161b22;
+    background: transparent;
   }
-  
-  .content tbody tr:nth-child(even) {
-    background: rgba(110, 118, 129, 0.15);
-  }
-  
-  .content hr {
-    border-top-color: #30363d;
+
+  /* legends */
+  .console-legend {
+    color: #8b949e;
   }
 }
+

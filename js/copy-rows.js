@@ -2,51 +2,50 @@
 (() => {
   "use strict";
 
+  // Convert a table row to TSV (skip copy column)
   function rowToTSV(tr) {
-    const cells = Array.from(tr.querySelectorAll("td, th"))
-      .filter((cell) => !cell.classList.contains("copy-col"));
-  
+    const cells = Array.from(tr.querySelectorAll("th, td"))
+      .filter(cell => !cell.classList.contains("copy-col"));
+
     return cells
-      .map((c) => (c.innerText || "").replace(/\s+/g, " ").trim())
+      .map(cell => (cell.innerText || "").replace(/\s+/g, " ").trim())
       .join("\t");
   }
 
+  // Copy text with modern API + fallback
   async function copyText(text) {
-    // Preferred modern API (works on HTTPS + most modern browsers)
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
       return;
     }
 
-    // Fallback for older browsers / non-secure contexts
     const ta = document.createElement("textarea");
     ta.value = text;
     ta.setAttribute("readonly", "");
     ta.style.position = "fixed";
     ta.style.left = "-9999px";
-    ta.style.top = "-9999px";
     document.body.appendChild(ta);
     ta.select();
     document.execCommand("copy");
     document.body.removeChild(ta);
   }
 
-  function addCopyButtonsToTable(table) {
-    const tbodyRows = table.querySelectorAll("tbody tr");
-    if (!tbodyRows.length) return;
+  function addCopyButtons(table) {
+    const rows = table.querySelectorAll("tbody tr");
+    if (!rows.length) return;
 
-    // Add an extra header cell so the column count stays consistent
+    // Add header cell once
     const headerRow = table.querySelector("thead tr");
     if (headerRow && !headerRow.querySelector(".copy-col")) {
       const th = document.createElement("th");
       th.className = "copy-col";
-      th.style.textAlign = "center";
       th.textContent = "Copy";
+      th.style.textAlign = "center";
+      th.style.fontWeight = "600";
       headerRow.appendChild(th);
     }
 
-    tbodyRows.forEach((tr) => {
-      // Avoid double-inserting if script runs twice
+    rows.forEach(tr => {
       if (tr.querySelector(".copy-row-btn")) return;
 
       const td = document.createElement("td");
@@ -56,25 +55,40 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "copy-row-btn";
-      btn.textContent = "Copy";
+      btn.setAttribute("aria-label", "Copy row");
+
+      // Inline SVG copy icon (blue)
+      btn.innerHTML = `
+        <svg class="copy-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="9" y="9" width="10" height="10" rx="2"></rect>
+          <rect x="5" y="5" width="10" height="10" rx="2"></rect>
+        </svg>
+      `;
 
       btn.addEventListener("click", async () => {
-        const tsv = rowToTSV(tr);
+        if (btn.disabled) return;
+
+        const original = btn.innerHTML;
+        const text = rowToTSV(tr);
 
         try {
-          await copyText(tsv);
-          const old = btn.textContent;
-          btn.textContent = "Copied!";
+          await copyText(text);
+
+          btn.innerHTML = "✓";
           btn.disabled = true;
 
           setTimeout(() => {
-            btn.textContent = old;
+            btn.innerHTML = original;
             btn.disabled = false;
           }, 900);
         } catch (err) {
           console.error(err);
-          btn.textContent = "Failed";
-          setTimeout(() => (btn.textContent = "Copy"), 1200);
+          btn.innerHTML = "✕";
+
+          setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+          }, 1200);
         }
       });
 
@@ -83,14 +97,14 @@
     });
   }
 
-  function initCopyButtons() {
-    document.querySelectorAll("table").forEach(addCopyButtonsToTable);
+  function init() {
+    document.querySelectorAll("table").forEach(addCopyButtons);
   }
 
-  // Run after DOM is ready (defer already helps, this is extra-safe)
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initCopyButtons);
+    document.addEventListener("DOMContentLoaded", init);
   } else {
-    initCopyButtons();
+    init();
   }
 })();
+
