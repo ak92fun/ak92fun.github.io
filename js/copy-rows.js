@@ -4,12 +4,13 @@
 
   // Convert a table row to TSV (skip copy column)
   function rowToTSV(tr) {
-    const cells = Array.from(tr.querySelectorAll("th, td"))
-      .filter(cell => !cell.classList.contains("copy-col"));
+    const cells = Array.from(tr.querySelectorAll("th, td")).filter(
+      (cell) => !cell.classList.contains("copy-col")
+    );
 
     return cells
-      .map(cell => (cell.innerText || "").replace(/\s+/g, " ").trim())
-      .join("\t");
+      .map((cell) => (cell.innerText || "").replace(/\s+/g, " ").trim())
+      .join("  ");
   }
 
   // Copy text with modern API + fallback
@@ -30,6 +31,27 @@
     document.body.removeChild(ta);
   }
 
+  // Inline SVG icons (stroke style, modern)
+  const ICON_COPY = `
+    <svg class="copy-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="9" y="9" width="10" height="10" rx="2"></rect>
+      <rect x="5" y="5" width="10" height="10" rx="2"></rect>
+    </svg>
+  `;
+
+  const ICON_CHECK = `
+    <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 6L9 17l-5-5"></path>
+    </svg>
+  `;
+
+  const ICON_X = `
+    <svg class="status-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18 6L6 18"></path>
+      <path d="M6 6l12 12"></path>
+    </svg>
+  `;
+
   function addCopyButtons(table) {
     const rows = table.querySelectorAll("tbody tr");
     if (!rows.length) return;
@@ -45,7 +67,7 @@
       headerRow.appendChild(th);
     }
 
-    rows.forEach(tr => {
+    rows.forEach((tr) => {
       if (tr.querySelector(".copy-row-btn")) return;
 
       const td = document.createElement("td");
@@ -57,36 +79,31 @@
       btn.className = "copy-row-btn";
       btn.setAttribute("aria-label", "Copy row");
 
-      // Inline SVG copy icon (blue)
-      btn.innerHTML = `
-        <svg class="copy-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="9" y="9" width="10" height="10" rx="2"></rect>
-          <rect x="5" y="5" width="10" height="10" rx="2"></rect>
-        </svg>
-      `;
+      // start icon
+      btn.innerHTML = ICON_COPY;
 
       btn.addEventListener("click", async () => {
         if (btn.disabled) return;
 
-        const original = btn.innerHTML;
         const text = rowToTSV(tr);
+
+        // prevent double-click while showing feedback
+        btn.disabled = true;
 
         try {
           await copyText(text);
-
-          btn.innerHTML = "✓";
-          btn.disabled = true;
+          btn.innerHTML = ICON_CHECK;
 
           setTimeout(() => {
-            btn.innerHTML = original;
+            btn.innerHTML = ICON_COPY;
             btn.disabled = false;
           }, 900);
         } catch (err) {
           console.error(err);
-          btn.innerHTML = "✕";
+          btn.innerHTML = ICON_X;
 
           setTimeout(() => {
-            btn.innerHTML = original;
+            btn.innerHTML = ICON_COPY;
             btn.disabled = false;
           }, 1200);
         }
@@ -107,4 +124,3 @@
     init();
   }
 })();
-

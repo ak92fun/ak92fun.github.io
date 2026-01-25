@@ -3,6 +3,11 @@
    ========================= */
 :root {
   color-scheme: light dark; /* allows native form controls to match */
+  
+  /* Accent system */
+  --accent-link: #0969da;
+  --accent-link-hover: #0969da;
+  --accent-muted: #8b949e;
 }
 
 html {
@@ -30,15 +35,25 @@ body {
 .site-header {
   position: relative;
   padding-top: 16px;
+  margin-bottom: 2em;
 }
 
 .site-header h1 {
   margin-top: 0;
+  margin-bottom: 0.15em;
+}
+
+.site-header hr {
+  width: 100%;
 }
 
 /* =========================
    Content typography rhythm
    ========================= */
+.content section + section {
+  margin-top: 3.5em;
+}
+
 .content h1,
 .content h2,
 .content h3,
@@ -49,7 +64,11 @@ body {
 .content hr {
   border: 0;
   border-top: 1px solid #30363d;
-  margin: 0.35em 0;
+  margin: 0.2em 0 0.9em;
+}
+
+.content hr + h4 {
+  margin-top: 2em;
 }
 
 .content h1 + hr,
@@ -59,31 +78,23 @@ body {
   margin-top: 0.25em;
 }
 
-.content hr + h1,
-.content hr + h2,
-.content hr + h3,
-.content hr + h4 {
-  margin-top: 0.55em;
-}
-
 h4 + p,
 h4 + ul,
 h4 + ol {
   margin-top: 0.3em;
+  margin-bottom: 2em;
 }
 
+.content h2 + h3,
+.content h3 + h3,
+.content h3 + h4 {
+  margin-top: 2em;
+}
 
 /* =========================
    Lists
    ========================= */
-ul {
-  list-style: none;
-  padding-left: 2em;
-  margin-left: 0;
-}
-
-.site-header ul,
-.console-legend ul {
+.content ul {
   list-style: none;
   padding-left: 2em;
   margin-left: 0;
@@ -98,9 +109,12 @@ li {
    Links
    ========================= */
 a {
-  color: #0969da;
+  color: var(--accent-link);
   text-decoration: none;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.15em;
 }
+
 a:hover {
   text-decoration: underline;
 }
@@ -124,9 +138,10 @@ a:hover {
   display: block;
 }
 
+
 .profile-icon img:hover {
-  border-color: currentColor;
-  box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.25);
+  border-color: var(--accent-link);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-link) 25%, transparent);
 }
 
 @media (max-width: 600px) {
@@ -139,7 +154,6 @@ a:hover {
 /* =========================
    Code (inline + blocks)
    ========================= */
-
 /* inline code */
 .content :not(pre) > code {
   font-family: ui-monospace, SFMono-Regular, SFMono, Menlo, Monaco, Consolas,
@@ -169,7 +183,6 @@ a:hover {
   padding: 0;
 }
 
-/* Rouge wrapper (Jekyll) */
 .content .highlight {
   margin: 16px 0;
   background: #f6f8fa;
@@ -181,7 +194,6 @@ a:hover {
   border: 0;
   background: transparent;
 }
-
 
 /* =========================
    Blockquotes
@@ -204,6 +216,7 @@ blockquote p {
 .content table {
   border-collapse: collapse;
   background: transparent;
+  width: max-content;
   max-width: 100%;
 }
 
@@ -213,10 +226,6 @@ blockquote p {
 .content th,
 .content td {
   background: transparent;
-}
-
-.content th {
-  font-size: 1.15em;
 }
 
 .content th,
@@ -238,8 +247,9 @@ blockquote p {
 
 /* Default alignment */
 .content th {
-  text-align: center;
+  font-size: 1.15em;
   font-weight: 600;
+  text-align: center;
 }
 
 .content td {
@@ -259,12 +269,35 @@ blockquote p {
 /* =========================
    Table copy button
    ========================= */
+/* Keep the Copy column a stable width (prevents table jiggle) */
+.content th.copy-col,
+.content td.copy-col {
+  width: 44px;
+  padding: 0 6px;
+  text-align: center;
+}
+
+/* Align the "Copy" header with the other headers */
+.content thead th.copy-col {
+  vertical-align: middle;
+  line-height: 1.2;      /* override global 0.9 */
+  padding-bottom: 10px;  /* match .content thead th */
+}
+
+/* Fixed-size button so icon/✓/✕ never changes row height */
 .content .copy-row-btn {
+  width: 28px;
+  height: 28px;
   background: transparent;
   border: none;
-  padding: 4px;
+  padding: 0;
   cursor: pointer;
-  color: #0969da; /* blue = clickable */
+  color: var(--accent-link);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  position: relative;
 }
 
 .content .copy-row-btn:disabled {
@@ -272,15 +305,29 @@ blockquote p {
   opacity: 0.8;
 }
 
-/* Copy icon (inline SVG) */
-.copy-icon {
+/* Base icon geometry */
+.copy-icon,
+.status-icon {
   width: 20px;
   height: 20px;
   display: inline-block;
   vertical-align: -0.125em;
   fill: none;
   stroke: currentColor;
+}
+
+/* Copy icon: rounded */
+.copy-icon {
   stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Status icons: ultra-sharp */
+.status-icon {
+  stroke-width: 2;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
 }
 
 /* =========================
@@ -289,7 +336,7 @@ blockquote p {
 .console-legend {
   font-size: 0.9em;
   color: #8b949e;
-  margin-bottom: 1.25em;
+  margin: 1em 0 1.25em 1.75em;
 }
 
 .console-legend ul {
@@ -300,7 +347,6 @@ blockquote p {
   margin: 0.15em 0;
   line-height: 1.3;
 }
-
 
 .console-legend summary {
   display: inline-flex;
@@ -330,6 +376,88 @@ blockquote p {
   transform: rotate(90deg);
 }
 
+/* ==================
+   Section meta links
+   ================== */
+.music-section .section-meta {
+ /* display: inline-block; */
+  display: block;
+  width: fit-content;
+  font-size: 0.9em;
+  color: var(--accent-link);
+  margin: 1em 0 1.25em 1.75em;
+}
+
+/* =========================
+   Collapsible music sections
+   ========================= */
+.music-section {
+  margin: 0.1em 0;
+}
+
+.music-section > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.music-section > summary::-webkit-details-marker {
+  display: none;
+}
+
+.music-section > summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 6px solid currentColor;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.music-section[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+/* prevent <h1>/<h2> default margins from pushing layout around */
+.music-section > summary > h1,
+.music-section > summary > h2,
+.music-section > summary > h3 {
+  margin: 0;
+}
+
+.music-section > table {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+/* =========================
+   Page: Music
+   ========================= */
+.page-music .content.container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.music-block {
+  width: fit-content;
+  overflow-x: auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.music-block .site-header hr {
+  margin-top: 0.15em;
+  margin-bottom: 1.1em;
+}
+
+.music-block > .site-header,
+.music-block > section {
+  padding: 0;
+}
+
 /* =========================
    Footer
    ========================= */
@@ -344,17 +472,23 @@ blockquote p {
 .site-footer p {
   margin: 0.2em 0;
 }
+
 /* =========================
    Dark mode overrides
    ========================= */
 @media (prefers-color-scheme: dark) {
+  :root {
+    --accent-link: #58a6ff;
+    --accent-link-hover: #58a6ff;
+  }
+  
   body {
     background: #0d1117;
     color: #c9d1d9;
   }
-  
+
   a {
-    color: #58a6ff;
+    color: var(--accent-link);
   }
   
   .profile-icon img {
@@ -372,18 +506,6 @@ blockquote p {
   .content .highlight {
     background: #161b22;
     border-color: #30363d;
-  }
-  
-  /* tables */
-  .content table,
-  .content th,
-  .content td {
-    border: 0;
-    background: transparent;
-  }
-  
-  .content thead th {
-    background: transparent;
   }
 
   /* legends */
