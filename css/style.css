@@ -211,7 +211,7 @@ blockquote p {
 }
 
 /* =========================
-   Table
+   Tables
    ========================= */
 .content table {
   border-collapse: collapse;
@@ -456,6 +456,20 @@ blockquote p {
 .music-block > .site-header,
 .music-block > section {
   padding: 0;
+}
+
+/* Use JS to set the "target width" for the header/hr */
+.music-block {
+  /* fallback: normal behavior until JS runs */
+  --music-max-width: auto;
+}
+
+.music-block > .site-header {
+  width: var(--music-max-width);
+}
+
+.music-block > .site-header hr {
+  width: 100%;
 }
 
 /* =========================

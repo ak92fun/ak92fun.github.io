@@ -5,9 +5,11 @@
   // Convert a table row to TSV (skip copy column)
   function rowToTSV(tr) {
     const cells = Array.from(tr.querySelectorAll("th, td")).filter(
-      (cell) => !cell.classList.contains("copy-col")
+      (cell) =>
+        !cell.classList.contains("copy-col") &&
+        !cell.classList.contains("nocopy")
     );
-
+  
     return cells
       .map((cell) => (cell.innerText || "").replace(/\s+/g, " ").trim())
       .join("  ");
