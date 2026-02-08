@@ -437,6 +437,8 @@ blockquote p {
    Page: Music
    ========================= */
 .page-music .content.container {
+  max-width: none;
+  margin-left: 32px;
   padding-left: 0;
   padding-right: 0;
 }
