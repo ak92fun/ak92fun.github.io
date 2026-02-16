@@ -475,6 +475,40 @@ blockquote p {
 }
 
 /* =========================
+   Random pick
+   ========================= */
+.random-pick {
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+#randomPickBtn {
+  appearance: none;
+  background: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  padding: 0.35rem 0.8rem;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+#randomPickBtn:active {
+  color: var(--accent-muted);
+  border-color: var(--accent-muted);
+}
+
+.random-pick-result {
+  margin-top: 0.75rem;
+  min-height: var(--random-pick-reserve, 0px);
+}
+
+/* =========================
    Footer
    ========================= */
 .site-footer {

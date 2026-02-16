@@ -70,32 +70,31 @@
     }
 
     rows.forEach((tr) => {
-      if (tr.querySelector(".copy-row-btn")) return;
-
+      // If this row was cloned, it may already contain the button markup
+      // but WITHOUT the click handler. Rebuild it to ensure it works.
+      const existingCopyCell = tr.querySelector("td.copy-col");
+      if (existingCopyCell) existingCopyCell.remove();
+    
       const td = document.createElement("td");
       td.className = "copy-col";
       td.style.textAlign = "center";
-
+    
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "copy-row-btn";
       btn.setAttribute("aria-label", "Copy row");
-
-      // start icon
       btn.innerHTML = ICON_COPY;
-
+    
       btn.addEventListener("click", async () => {
         if (btn.disabled) return;
-
+    
         const text = rowToTSV(tr);
-
-        // prevent double-click while showing feedback
         btn.disabled = true;
-
+    
         try {
           await copyText(text);
           btn.innerHTML = ICON_CHECK;
-
+    
           setTimeout(() => {
             btn.innerHTML = ICON_COPY;
             btn.disabled = false;
@@ -103,14 +102,14 @@
         } catch (err) {
           console.error(err);
           btn.innerHTML = ICON_X;
-
+    
           setTimeout(() => {
             btn.innerHTML = ICON_COPY;
             btn.disabled = false;
           }, 1200);
         }
       });
-
+    
       td.appendChild(btn);
       tr.appendChild(td);
     });
@@ -125,4 +124,11 @@
   } else {
     init();
   }
+	
+  document.addEventListener("rows:added", (e) => {
+    const root = e.detail || document;
+    root.querySelectorAll("table").forEach(addCopyButtons);
+  });
+	
 })();
+
